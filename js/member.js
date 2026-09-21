@@ -6,23 +6,6 @@ const MEMBER_NAME = urlParams.get('member');
 
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Security: escape any DB-sourced string before inserting into innerHTML to prevent stored XSS
-function escapeHtml(str) {
-  if (str === null || str === undefined) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-const GEN_COLORS = {
-  3: '#ec4899', 6: '#22c55e', 7: '#15803d', 8: '#1e40af',
-  9: '#06b6d4', 10: '#38bdf8', 11: '#f97316', 12: '#fde68a',
-  13: '#facc15', 14: '#f3c6ff'
-};
-
 let isLoading = true;
 
 (function initializeTheme() {

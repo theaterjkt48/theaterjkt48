@@ -17,23 +17,6 @@ const { setlist: SETLIST_NAME, date: SHOW_DATE, time: SHOW_TIME } = getUrlParams
 const SOURCE_PAGE = new URLSearchParams(window.location.search).get('source') || '';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Security: escape any DB- or URL-sourced string before inserting into innerHTML to prevent XSS
-function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-const GEN_COLORS = {
-  3: '#ec4899', 6: '#22c55e', 7: '#15803d', 8: '#1e40af',
-  9: '#06b6d4', 10: '#38bdf8', 11: '#f97316', 12: '#fde047',
-  13: '#facc15', 14: '#e879f9'
-};
-
 const SETLIST_COLORS = {
   'Te Wo Tsunaginagara':     { from: '#FF69B4', to: '#c0407a' },
   'Te wo Tsunaginagara':     { from: '#FF69B4', to: '#c0407a' },
@@ -78,7 +61,7 @@ function getDurationMinutes(isNonShow) {
 function getLiveStatus(show_date, show_time, isNonShow = false) {
     if (!show_date || !show_time) return 'FINISHED';
     const now = new Date();
-    const showStart = new Date(`${show_date}T${show_time}`);
+    const showStart = parseWIB(show_date, show_time);
     
     // Live dimulai 15 menit sebelum jam tayang
     const liveStart = new Date(showStart.getTime() - PRE_SHOW_BUFFER_MINUTES * 60000);
@@ -145,7 +128,7 @@ function getSetlistBannerUrl(setlistName) {
   if (lowerName.includes('passion')) {
     return 'banner/passion.jpg';
   }
-    if (lowerName.includes('itidaki')) {
+    if (lowerName.includes('itadaki')) {
     return 'banner/love.jpg';
   }
   if (lowerName.includes('bakudan') || lowerName.includes('dream')) {
@@ -296,7 +279,7 @@ function renderPage(showData, showTime, isBirthdayShow, birthdayMember, isGradua
     statusBadge = `<div class="status-badge-main"><span class="upcoming-dot-main"></span>UPCOMING</div>`;
     
     // Countdown ke waktu LIVE (15 menit sebelum jam tayang)
-    const showStart = new Date(`${SHOW_DATE}T${showTime}`);
+    const showStart = parseWIB(SHOW_DATE, showTime);
     const liveStart = new Date(showStart.getTime() - PRE_SHOW_BUFFER_MINUTES * 60000);
     
     countdownHTML = `
@@ -367,7 +350,7 @@ function renderPage(showData, showTime, isBirthdayShow, birthdayMember, isGradua
     </div>`;
   
   if (status === 'UPCOMING') {
-    const showStart = new Date(`${SHOW_DATE}T${showTime}`);
+    const showStart = parseWIB(SHOW_DATE, showTime);
     const liveStart = new Date(showStart.getTime() - PRE_SHOW_BUFFER_MINUTES * 60000);
     startCountdown(liveStart);
   }

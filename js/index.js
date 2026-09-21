@@ -1,23 +1,6 @@
 const SUPABASE_URL = "https://pprxfopqkvpeajeoxzig.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwcnhmb3Bxa3ZwZWFqZW94emlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNTI4MTIsImV4cCI6MjA4MTgyODgxMn0.iXRO_dAHhtVHRLqGTresG_63RD2zIaopNXtXYNfthdg";
 
-const GEN_COLORS = {
-    3: '#ec4899', 6: '#22c55e', 7: '#15803d', 8: '#1e40af',
-    9: '#06b6d4', 10: '#38bdf8', 11: '#f97316', 12: '#fde047',
-    13: '#facc15', 14: '#e879f9'
-};
-
-// Security: escape any DB-sourced string before inserting into innerHTML to prevent stored XSS
-function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
 const SETLIST_DATA = {
     ramune: {id: 'ramune', title: 'Cara Meminum Ramune', members: {}},
     tte: {id: 'tte', title: 'Te Wo Tsunaginagara', members: {}},
@@ -32,6 +15,9 @@ const PRE_SHOW_BUFFER_MINUTES = 15; // Live mulai 15 menit sebelum jam tayang
 function getDurationMinutes(isNonShow) {
     return isNonShow ? EVENT_DURATION_MINUTES : SHOW_DURATION_MINUTES;
 }
+
+// Helper: parse show datetime as WIB (UTC+7)
+
 const MILESTONE = 1000;
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -65,7 +51,7 @@ function isMemberInactive(m) {
 function getLiveStatus(showDate, showTime, isNonShow = false) {
     if (!showDate || !showTime) return 'FINISHED';
     const now = new Date();
-    const showDateTime = new Date(`${showDate}T${showTime}`);
+    const showDateTime = parseWIB(showDate, showTime);
     const liveStart = new Date(showDateTime.getTime() - PRE_SHOW_BUFFER_MINUTES * 60000);
     const liveEnd = new Date(showDateTime.getTime() + getDurationMinutes(isNonShow) * 60000);
     if (now < liveStart) return 'UPCOMING';
@@ -134,7 +120,7 @@ function toggleTheme() {
 }
 
 function openSchedule() {
-    window.location.href = '/schedule';
+    window.location.href = 'schedule.html';
 }
 
 // ============= LIVE SHOW BANNER =============
@@ -261,7 +247,7 @@ function openLiveShowDetail() {
     localStorage.setItem('jkt48_selected_setlist', currentLiveShowData.name);
     localStorage.setItem('jkt48_selected_date', dateParam);
     localStorage.setItem('jkt48_selected_time', currentLiveShowData.earliestTime);
-    window.location.href = `/liveshow?setlist=${setlistParam}&date=${dateParam}&time=${timeParam}`;
+    window.location.href = `liveshow.html?setlist=${setlistParam}&date=${dateParam}&time=${timeParam}`;
 }
 
 // ============= LOAD DATA =============
@@ -336,10 +322,18 @@ function processSetlistCounts() {
             }
         });
         Object.keys(showCountMap).forEach(mapKey => {
-            const parts = mapKey.split('_');
-            const key = parts.pop();
-            const memberName = parts.join('_');
-            if (SETLIST_DATA[key] && memberName) {
+            const setlistKeys = Object.keys(SETLIST_DATA);
+            let key = null;
+            let memberName = mapKey;
+            for (const sk of setlistKeys) {
+                const suffix = '_' + sk;
+                if (mapKey.endsWith(suffix)) {
+                    key = sk;
+                    memberName = mapKey.slice(0, -suffix.length);
+                    break;
+                }
+            }
+            if (key && memberName) {
                 SETLIST_DATA[key].members[memberName] = showCountMap[mapKey];
             }
         });
@@ -399,7 +393,7 @@ async function updateLastUpdate() {
 
 function openMemberPage(name) {
     saveCurrentState();
-    window.location.href = (currentSetlistView ? '/riwayat' : '/member') + '?member=' + encodeURIComponent(name);
+    window.location.href = (currentSetlistView ? 'riwayat.html' : 'member.html') + '?member=' + encodeURIComponent(name);
 }
 
 // ============= RENDER MEMBERS =============

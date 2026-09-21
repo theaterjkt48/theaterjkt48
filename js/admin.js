@@ -4,18 +4,7 @@ var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 // (supabase.auth.signInWithPassword). Create admin users in the Supabase Dashboard under
 // Authentication → Users, not in this file. See SECURITY REPORT for the RLS policies that
 // must accompany this change — without them, this login is still cosmetic.
-// Security: escape any DB-sourced string before inserting into innerHTML to prevent stored XSS
-function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-// For values interpolated inside an inline onclick/onerror="fn('VALUE')" attribute —
-// must survive both JS-string parsing and HTML-attribute parsing.
+
 function escapeForJsAttr(str) {
     if (str === null || str === undefined) return '';
     return String(str)
@@ -28,7 +17,6 @@ function escapeForJsAttr(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
 }
-var GEN_COLORS={3:'#ec4899',6:'#22c55e',7:'#15803d',8:'#1e40af',9:'#06b6d4',10:'#38bdf8',11:'#f97316',12:'#fde68a',13:'#facc15',14:'#e879f9'};
 var SETLIST_INTI={'Cara Meminum Ramune':'Setlist segar seperti minuman ramune','Te Wo Tsunaginagara':'Setlist sambil bergandengan tangan','Pertaruhan Cinta':'Setlist tentang taruhan cinta untuk member inti'};
 var SETLIST_PASSION=Object.assign({},SETLIST_INTI,{'Passion 200%':'Setlist penuh semangat 200% untuk member inti'});
 var SETLIST_DREAM=Object.assign({},SETLIST_INTI,{'DREAM BAKUDAN':'Setlist spesial Team Dream — penuh ledakan energi'});

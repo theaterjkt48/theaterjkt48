@@ -2,17 +2,6 @@ const SUPABASE_URL = "https://pprxfopqkvpeajeoxzig.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwcnhmb3Bxa3ZwZWFqZW94emlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNTI4MTIsImV4cCI6MjA4MTgyODgxMn0.iXRO_dAHhtVHRLqGTresG_63RD2zIaopNXtXYNfthdg";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Security: escape any DB-sourced string before inserting into innerHTML to prevent stored XSS
-function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
 const SHOW_DURATION_MINUTES = 150;
 const EVENT_DURATION_MINUTES = 150;
 const PRE_SHOW_BUFFER_MINUTES = 15;
@@ -38,11 +27,13 @@ function getDurationMinutes(isNonShow) {
   }
 })();
 
+// Helper: parse show datetime as WIB (UTC+7) — defined in utils.js
+
 // ============= LIVE STATUS =============
 function getLiveStatus(showDate, showTime, isNonShow = false) {
     if (!showDate || !showTime) return 'FINISHED';
     const now = new Date();
-    const showDateTime = new Date(`${showDate}T${showTime}`);
+    const showDateTime = parseWIB(showDate, showTime);
     const liveStart = new Date(showDateTime.getTime() - PRE_SHOW_BUFFER_MINUTES * 60000);
     const liveEnd = new Date(showDateTime.getTime() + getDurationMinutes(isNonShow) * 60000);
     if (now < liveStart) return 'UPCOMING';

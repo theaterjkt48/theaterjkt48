@@ -6,19 +6,6 @@ const MEMBER_NAME = urlParams.get('member');
 
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Security: escape any DB- or URL-sourced string before inserting into innerHTML to prevent XSS
-function escapeHtml(str) {
-  if (str === null || str === undefined) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-// For values interpolated inside onclick="fn('VALUE')" — must survive both JS-string
-// parsing and HTML-attribute parsing, or a quote in the value could break out and run
-// arbitrary script (attribute-breakout XSS).
 function escapeForJsAttr(str) {
   if (str === null || str === undefined) return '';
   return String(str)
@@ -31,12 +18,6 @@ function escapeForJsAttr(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
-
-const GEN_COLORS = {
-  3: '#ec4899', 6: '#22c55e', 7: '#15803d', 8: '#1e40af',
-  9: '#06b6d4', 10: '#38bdf8', 11: '#f97316', 12: '#fde68a',
-  13: '#facc15', 14: '#e879f9'
-};
 
 const LIVE_CONFIG = {
     BEFORE_MINUTES: 15,
@@ -60,7 +41,7 @@ function getLiveStatus(showDate, showTime) {
     if (!showDate || !showTime) return 'FINISHED';
     
     const now = new Date();
-    const showDateTime = new Date(`${showDate}T${showTime}`);
+    const showDateTime = parseWIB(showDate, showTime);
     
     const liveStart = new Date(showDateTime.getTime() - (LIVE_CONFIG.BEFORE_MINUTES * 60 * 1000));
     const liveEnd = new Date(showDateTime.getTime() + (LIVE_CONFIG.DURATION_MINUTES * 60 * 1000));
