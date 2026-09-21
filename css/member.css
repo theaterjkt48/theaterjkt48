@@ -365,7 +365,7 @@ body.dark .spinner{border-color:rgba(255,255,255,0.1);border-top-color:#9ca3af}
 
   .container{
     position:fixed !important;
-    top:var(--mb-header-h, 75px);
+    top:var(--site-header-h, 75px);
     left:0;right:0;bottom:0;
     max-width:100% !important;
     width:100% !important;
@@ -456,7 +456,7 @@ body.dark .spinner{border-color:rgba(255,255,255,0.1);border-top-color:#9ca3af}
 
   .container{
     position:fixed !important;
-    top:var(--mb-header-h, 75px);
+    top:var(--site-header-h, 75px);
     left:0;right:0;bottom:0;
     max-width:100% !important;
     width:100% !important;

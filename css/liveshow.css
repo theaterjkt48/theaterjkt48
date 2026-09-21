@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',Arial,sans-serif;background:#f5f5f5;color:#333;min-height:100vh;padding:0;transition:background 0.3s,color 0.3s}
+body{font-family:'Plus Jakarta Sans',Arial,sans-serif;background:#f5f5f5;color:#333;min-height:100vh;padding:0;transition:background 0.3s,color 0.3s;overflow:auto}
 body.dark{background:#0a0e1a;color:#e5e7eb}
 
 .main-header{position:fixed;top:0;left:0;right:0;background:rgba(255,255,255,0.88);z-index:1001;transition:background 0.3s,border-color 0.3s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 2px 14px rgba(0,0,0,0.07)}
@@ -22,13 +22,13 @@ body.dark .detail-title{color:#e5e7eb}
     width:100%;
     max-width:100%;
     margin:0;
-    margin-top:var(--lv-header-h, 78px);
+    margin-top:var(--site-header-h, 78px);
     background:rgba(255,255,255,0.88);
     border-radius:0;
     overflow:visible;
     box-shadow:none;
     transition:background 0.3s;
-    min-height:calc(100vh - var(--lv-header-h, 78px));
+    min-height:calc(100vh - var(--site-header-h, 78px));
 }
 body.dark .container{background:rgba(17,24,39,0.88);box-shadow:none}
 
@@ -52,7 +52,7 @@ body.dark .container{background:rgba(17,24,39,0.88);box-shadow:none}
 .setlist-banner-container{margin-bottom:15px}
 .banner-fallback{width:100%;max-width:600px;height:200px;margin:0 auto 15px;border-radius:12px;background:linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.8);font-size:18px;font-weight:bold;text-align:center;padding:20px;border:2px dashed rgba(255,255,255,0.3);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
 
-.status-badge-main{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);padding:6px 12px;border-radius:15px;font-size:12px;font-weight:bold;margin-bottom:10px;color:#fff}
+.status-badge-main{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);padding:6px 12px;border-radius:15px;font-size:12px;font-weight:bold;margin-bottom:10px;color:#fff;white-space:nowrap;position:relative;z-index:1}
 .live-dot-main{width:8px;height:8px;background:rgba(255,255,255,0.88);border-radius:50%;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
 .upcoming-dot-main{width:8px;height:8px;background:rgba(255,255,255,0.88);border-radius:50%}
@@ -137,9 +137,12 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
    MOBILE (< 480px) — vertikal, banner di atas
    ============================================= */
 @media (max-width:480px){
+    html,body{overflow:auto !important;height:auto !important}
     .main-header{position:sticky;top:0}
-    .container{margin-top:0 !important;min-height:auto}
+    .container{margin-top:0 !important;min-height:auto;overflow:visible !important}
     .show-content-wrapper{display:block}
+    .show-left-panel{width:100%}
+    .show-right-panel{width:100%}
     .live-show-header{padding:15px;text-align:center}
     .setlist-banner{width:100%;max-width:100%;height:180px;object-fit:cover;object-position:center;border-radius:8px;margin-bottom:12px;}
     .banner-fallback{height:140px;font-size:14px;border-radius:8px;max-width:100%}
@@ -157,7 +160,7 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
     .countdown-timer{gap:8px}
     .members-section{padding:12px}
     .section-title{font-size:14px;margin-bottom:10px}
-    .members-grid{grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));gap:12px}
+    .members-grid{grid-template-columns:repeat(2, 1fr);gap:12px}
     .member-card{border-radius:10px}
     .member-info{padding:10px 6px}
     .member-name{font-size:12px;min-height:28px}
@@ -175,7 +178,7 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
 }
 
 @media (max-width:360px){
-    .members-grid{grid-template-columns:repeat(auto-fill, minmax(100px, 1fr));gap:10px}
+    .members-grid{grid-template-columns:repeat(2, 1fr);gap:10px}
     .live-show-header h1{font-size:15px}
     .status-badge-main{font-size:10px}
     .live-show-date-time{font-size:10px}
@@ -256,7 +259,7 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
     /* Container: mengisi SISA layar setelah header, posisi absolute agar benar-benar pas */
     .container{
         position:fixed !important;
-        top:var(--lv-header-h, 78px);
+        top:var(--site-header-h, 78px);
         left:0; right:0; bottom:0;
         max-width:100% !important;
         width:100% !important;
@@ -281,28 +284,21 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
         top:0; left:0; right:0; bottom:0;
     }
 
-    /* Panel kiri (merah): scroll tersembunyi agar konten tidak terpotong */
+    /* Panel kiri (merah): fixed, no scroll */
     .show-left-panel{
         flex:0 0 340px !important;
         max-width:340px !important;
         width:340px !important;
         height:100% !important;
-        overflow-y:auto !important;
-        overflow-x:hidden !important;
-        scrollbar-width:none !important;
+        overflow:hidden !important;
         position:relative;
-        display:flex;
-        flex-direction:column;
-        align-self:stretch;
     }
-    .show-left-panel::-webkit-scrollbar{ display:none !important; }
 
-    /* live-show-header: konten di-center vertikal */
+    /* live-show-header */
     .live-show-header{
-        flex:0 0 auto !important;
-        min-height:100% !important;
+        height:100%;
         overflow:visible !important;
-        padding:14px !important;
+        padding:20px 14px !important;
         text-align:center;
         display:flex;
         flex-direction:column;
@@ -388,7 +384,7 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
     /* Container: posisi fixed mengisi sisa layar */
     .container{
         position:fixed !important;
-        top:var(--lv-header-h, 78px);
+        top:var(--site-header-h, 78px);
         left:0; right:0; bottom:0;
         max-width:100% !important;
         width:100% !important;
@@ -408,25 +404,19 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
         position:absolute;top:0;left:0;right:0;bottom:0;
     }
 
-    /* Panel kiri: SCROLL tersembunyi, lebar tetap */
+    /* Panel kiri: fixed, no scroll */
     .show-left-panel{
         flex:0 0 460px;max-width:460px;
         height:100%;
-        overflow-y:auto;
-        overflow-x:hidden;
-        scrollbar-width:none;
+        overflow:hidden;
         position:relative;
-        display:flex;flex-direction:column;
-        align-self:stretch;
     }
-    .show-left-panel::-webkit-scrollbar{ display:none; }
 
     /* live-show-header isi penuh panel kiri, konten di-center vertikal */
     .live-show-header{
-        flex:1 1 auto;
-        min-height:100%;
+        height:100%;
         overflow:visible;
-        padding:25px;text-align:center;
+        padding:30px 25px;text-align:center;
         display:flex;flex-direction:column;justify-content:center;
         border-radius:0;
     }
@@ -442,23 +432,23 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
     }
     body.dark .show-right-panel{background:rgba(17,24,39,0.88)}
 
-    .setlist-banner{width:100%;max-width:100%;height:190px;border-radius:10px;margin-bottom:14px;object-fit:cover;object-position:center;flex-shrink:0;}
-    .setlist-banner-container{width:100%;background:rgba(0,0,0,0.15);border-radius:10px;overflow:hidden;margin-bottom:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    .setlist-banner-container .setlist-banner{margin-bottom:0;border-radius:0}
-    .banner-fallback{max-width:100%;height:190px;font-size:17px;border-radius:10px;flex-shrink:0;}
-    .live-show-header h1{font-size:22px;margin-bottom:14px;flex-shrink:0;}
-    .status-badge-main{padding:8px 16px;font-size:14px;margin-bottom:14px;flex-shrink:0;}
+    .setlist-banner{width:100%;height:170px;object-fit:cover;object-position:center;display:block;border-radius:10px;flex-shrink:0;}
+    .setlist-banner-container{width:100%;height:170px;overflow:hidden;border-radius:10px;margin-bottom:10px;flex-shrink:0;}
+    .setlist-banner-container .setlist-banner{border-radius:0;height:100%;}
+    .banner-fallback{width:100%;height:170px;font-size:14px;border-radius:10px;flex-shrink:0;}
+    .live-show-header h1{font-size:20px;margin-bottom:10px;flex-shrink:0;}
+    .status-badge-main{padding:6px 14px;font-size:13px;margin-bottom:10px;flex-shrink:0;}
     .live-dot-main,.upcoming-dot-main{width:10px;height:10px}
-    .live-show-date-time{flex-direction:column;gap:11px;font-size:14px;margin-bottom:18px;flex-shrink:0;}
+    .live-show-date-time{flex-direction:column;gap:8px;font-size:13px;margin-bottom:12px;flex-shrink:0;}
     .live-show-date-time div{gap:7px;justify-content:center}
-    .live-show-date-time svg{width:16px;height:16px}
-    .countdown-container{max-width:100%;padding:16px 18px;margin:16px auto;flex-shrink:0;}
-    .countdown-title{font-size:14px}
-    .countdown-value{font-size:26px;min-width:50px;padding:8px 12px}
-    .countdown-label{font-size:11px}
-    .countdown-timer{gap:14px}
-    .watch-live-btn{padding:14px 28px;font-size:15px;margin:18px auto;flex-shrink:0;}
-    .watch-live-btn svg{width:20px;height:20px}
+    .live-show-date-time svg{width:14px;height:14px}
+    .countdown-container{max-width:100%;padding:10px 14px;margin:10px auto;flex-shrink:0;}
+    .countdown-title{font-size:12px}
+    .countdown-value{font-size:22px;min-width:44px;padding:6px 10px}
+    .countdown-label{font-size:10px}
+    .countdown-timer{gap:12px}
+    .watch-live-btn{padding:10px 22px;font-size:13px;margin:12px auto;flex-shrink:0;}
+    .watch-live-btn svg{width:18px;height:18px}
     .members-section{padding:25px}
     .section-title{font-size:18px;margin-bottom:20px}
     .members-count{font-size:12px;padding:4px 10px;min-width:30px}

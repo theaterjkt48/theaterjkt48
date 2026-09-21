@@ -154,7 +154,7 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
 
     .container{
         position:fixed !important;
-        top:var(--header-h, 80px);
+        top:var(--site-header-h, 80px);
         left:0;right:0;bottom:0;
         display:flex !important;
         flex-direction:row !important;
@@ -296,7 +296,7 @@ body.dark .detail-footer{color:#9ca3af;border-top-color:#374151}
     /* Container fixed mengisi sisa layar */
     .container{
         position:fixed !important;
-        top:var(--header-h, 80px);
+        top:var(--site-header-h, 80px);
         left:0;right:0;bottom:0;
         display:flex !important;
         flex-direction:row !important;
